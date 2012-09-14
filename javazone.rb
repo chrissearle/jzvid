@@ -318,6 +318,8 @@ if config.match?
     puts "        #{error[:url]}"
   end
 
+  puts "Matched: #{mapping.size}"
+  
   config.set_output
 
   puts <<EOF
