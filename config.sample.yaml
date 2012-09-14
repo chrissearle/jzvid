@@ -1,0 +1,11 @@
+tag: JavaZone YYYY
+vimeo:
+  key:
+  secret:
+  token:
+  token_secret:
+incogito:
+  url: http://javazone.no/incogito10/rest/events/JavaZone%20YYYY/sessions
+mongo:
+  uri: "mongodb://localhost:27017"
+  db: "JavaZone"
