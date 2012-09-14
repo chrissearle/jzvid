@@ -1,0 +1,32 @@
+GEM
+  remote: http://rubygems.org/
+  specs:
+    bson (1.7.0)
+    bson_ext (1.7.0)
+      bson (~> 1.7.0)
+    httparty (0.9.0)
+      multi_json (~> 1.0)
+      multi_xml
+    httpclient (2.2.7)
+    json (1.7.5)
+    mongo (1.7.0)
+      bson (~> 1.7.0)
+    multi_json (1.3.6)
+    multi_xml (0.5.1)
+    multipart-post (1.1.5)
+    oauth (0.4.7)
+    vimeo (1.5.3)
+      httparty (>= 0.4.5)
+      httpclient (>= 2.1.5.2)
+      json (>= 1.1.9)
+      multipart-post (>= 1.0.1)
+      oauth (>= 0.4.3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bson_ext
+  json
+  mongo
+  vimeo
