@@ -9,6 +9,16 @@ def clean_title(title)
   title.strip.upcase.gsub(/[^A-Z\s]/, '').gsub(/\n/, " ").gsub(/  */, " ")
 end
 
+class Hash
+  def ems?
+    self.has_key? :eurl
+  end
+
+  def vimeo?
+    self.has_key? :vurl
+  end
+end
+
 class Configuration
   def initialize
     @config = YAML.load_file("config.yaml")
@@ -60,13 +70,14 @@ class Videos
 
       seen = seen + videos['videos']['on_this_page'].to_i
 
-      videos['videos']['video'].map do |video|
+      videos['videos']['video'].inject(result) do |memo, video|
         item = {
           :vtitle      => video['title'],
           :vurl        => video['urls']['url'].first['_content'],
-          :vcleantitle => clean_title(video['title'])
         }
-        result[item[:vcleantitle]] = item
+        memo[clean_title(item[:vtitle])] = item
+
+        memo
       end
     end
     
@@ -88,18 +99,15 @@ class EMS
 
     doc = JSON.parse json_response
 
-    result = {}
-
-    doc["collection"]["items"].each do |session|
+    doc["collection"]["items"].inject({}) do |memo, session|
       item = {
         :etitle      => session['data'].find{|i| i["name"] == "title"}["value"],
         :eurl        => session['href'],
-        :ecleantitle => clean_title(session['data'].find{|i| i["name"] == "title"}["value"])
       }
-      result[item[:ecleantitle]] = item
+      memo[clean_title(item[:etitle])] = item
+
+      memo
     end
-    
-    result
   end
 end
 
@@ -110,8 +118,8 @@ ems = EMS.new(config)
 
 items = ems.retrieve.merge(videos.retrieve){|key, oldval, newval| newval.merge(oldval)}.values
 
-items.find_all{|i| i.has_key?(:vurl) && i.has_key?(:eurl)}.map {|item| puts "#{item[:eurl].gsub(/.*\//, "")}\t#{item[:vurl]}"}
+items.find_all{|i| i.vimeo? && i.ems?}.map {|item| puts "#{item[:eurl].gsub(/.*\//, "")}\t#{item[:vurl]}"}
 
-items.find_all{|i| i.has_key?(:vurl) && !i.has_key?(:eurl)}.map {|item| $stderr.puts "#{item[:vtitle]} only on Vimeo #{item[:vurl]}"}
+items.find_all{|i| i.vimeo? && !i.ems?}.map {|item| $stderr.puts "#{item[:vtitle]} only on Vimeo #{item[:vurl]}"}
 
-items.find_all{|i| !i.has_key?(:vurl) && i.has_key?(:eurl)}.map {|item| $stderr.puts "#{item[:etitle]} only on EMS #{item[:eurl]}"}
+items.find_all{|i| !i.vimeo? && i.ems?}.map {|item| $stderr.puts "#{item[:etitle]} only on EMS #{item[:eurl]}"}
