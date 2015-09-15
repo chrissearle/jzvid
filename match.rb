@@ -5,8 +5,12 @@ require 'json'
 require 'open-uri'
 require 'yaml'
 
-def clean_title(title)
-  title.strip.upcase.gsub(/[^A-Z\s]/, '').gsub(/\n/, " ").gsub(/  */, " ")
+def clean_title(title, strip_author = false)
+  if strip_author
+    title.strip.upcase.gsub(/ - /, "z").gsub(/z[^z]*$/, "").gsub(/z/, ' ').gsub(/[^A-Z0-9\s]/, '').gsub(/\n/, " ").gsub(/  */, " ")
+  else
+    title.strip.upcase.gsub(/[^A-Z0-9\s]/, '').gsub(/\n/, " ").gsub(/  */, " ")
+  end
 end
 
 class Hash
@@ -75,7 +79,8 @@ class Videos
           :vtitle      => video['title'],
           :vurl        => video['urls']['url'].first['_content'],
         }
-        memo[clean_title(item[:vtitle])] = item
+
+        memo[clean_title(item[:vtitle], true)] = item
 
         memo
       end
@@ -103,7 +108,9 @@ class EMS
       item = {
         :etitle      => session['data'].find{|i| i["name"] == "title"}["value"],
         :eurl        => session['href'],
+        :eformat     => session['data'].find{|i| i["name"] == "format"}["value"],
       }
+
       memo[clean_title(item[:etitle])] = item
 
       memo
@@ -116,7 +123,7 @@ config = Configuration.new
 videos = Videos.new(config)
 ems = EMS.new(config)
 
-items = ems.retrieve.merge(videos.retrieve){|key, oldval, newval| newval.merge(oldval)}.values
+items = ems.retrieve.merge(videos.retrieve){|key, oldval, newval| newval.merge(oldval)}.values.select {|item| item[:eformat] != 'workshop'}
 
 items.find_all{|i| i.vimeo? && i.ems?}.map {|item| puts "#{item[:eurl].gsub(/.*\//, "")}\t#{item[:vurl]}"}
 

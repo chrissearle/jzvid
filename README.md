@@ -2,14 +2,24 @@
 
 This matches up EMS sessions and Vimeo vidoes based on title
 
-You'll need vimeo advanced api consumer key/secret - and you can use the vimeo gem README and auth.rb to get the token info
+You'll need to create a config.yaml based on config.yaml.sample.
 
-You'll need a config.yaml file - fill out your consumer info, add the correct album ID for the year's vimeo album and add the EMS-redux
-URL for the year's session collection.
+To get the vimeo lines - log in to https://developer.vimeo.com/apps as
+javazone - select JavaZone video mapper - OAuth tab. For the key and
+secret - just take them - for access token - scroll down - there's a
+pre-created one.
 
+vimeo:
+  key: Client ID
+  secret: Client Secret
+  token: Access token
+  token_secret: Access token secret
+  album: Numeric ID of the album on Vimeo for the videos for the year you're matching
+ems:
+  url: The sessions URL on EMS for the year you're matching
 
 ### Running
 
     $ bundle
-    $ bundle exec ./match.rb > mapping 2> missing
+    $ bundle exec ./match.rb > mapping.txt 2> missing.txt
 
