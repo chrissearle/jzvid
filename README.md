@@ -9,14 +9,17 @@ javazone - select JavaZone video mapper - OAuth tab. For the key and
 secret - just take them - for access token - scroll down - there's a
 pre-created one.
 
+```
 vimeo:
-  key: Client ID
-  secret: Client Secret
-  token: Access token
-  token_secret: Access token secret
-  album: Numeric ID of the album on Vimeo for the videos for the year you're matching
+  key: 'Client ID'
+  secret: 'Client Secret'
+  token: 'Access token'
+  token_secret: 'Access token secret'
+  album: 'Numeric ID of the album on Vimeo for the videos for the year you're matching'
 ems:
-  url: The sessions URL on EMS for the year you're matching
+  url: 'The sessions URL on EMS for the year you're matching'
+  
+```
 
 ### Running
 
